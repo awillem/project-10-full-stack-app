@@ -1,7 +1,21 @@
 import React, { Component } from 'react';
-import './App.css';
+import {
+  Route,
+  // Redirect,
+  BrowserRouter,
+  Switch
+} from 'react-router-dom';
+import './css/global.css'
 import axios from 'axios';
 
+// Import components
+import Header from './Components/Header';
+import Courses from './Components/Courses';
+import CourseDetail from './Components/CourseDetail';
+import UserSignIn from './Components/UserSignIn';
+import UserSignUp from './Components/UserSignUp';
+import CreateCourse from './Components/CreateCourse';
+import UpdateCourse from './Components/UpdateCourse';
 
 
 class App extends Component {
@@ -24,28 +38,26 @@ class App extends Component {
   }
 
   render() {
-    const courses = this.state.courses;
-    let titles;
+    // const courses = this.state.courses;
+    // let titles;
 
-    titles = courses.map(course => <p>{course.title}</p>);
+    // titles = courses.map(course => <p>{course.title}</p>);
 
     return (
-      <div className="App">
-        <header className="App-header">
-          <p>
-            Hello
-          </p>
-          <p>{titles}</p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
+      <BrowserRouter>
+        <div>
+          <Header />
+          <Switch>
+            <Route exact path="/" render={() => <Courses  />} />
+            <Route path="/courses/create" render={() => <CreateCourse  />} />
+            <Route path="/courses/:id/update" render={() => <UpdateCourse  />} />
+            <Route path="/courses/:id" render={() => <CourseDetail  />} />
+            <Route path="/signin" render={() => <UserSignIn  />} />
+            <Route path="/signup" render={() => <UserSignUp  />} />
+            <Route path="/signout" render={() => <Courses  />} />
+          </Switch>
+        </div>
+      </BrowserRouter>
     );
   }
 }
