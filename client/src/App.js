@@ -5,8 +5,8 @@ import {
   BrowserRouter,
   Switch
 } from 'react-router-dom';
-import './css/global.css'
-import axios from 'axios';
+import './css/global.css';
+// import axios from 'axios';
 
 // Import components
 import Header from './Components/Header';
@@ -27,21 +27,22 @@ class App extends Component {
     };
   }
 
-  componentDidMount() {
-    axios.get('http://localhost:5000/api/courses')
-      .then(response => {
-        console.log(response.data);
-        this.setState({
-          courses: response.data
-        });
-      });
-  }
+  // componentDidMount() {
+  //   axios.get('http://localhost:5000/api/courses')
+  //     .then(response => {
+  //       console.log("response",response.data);
+  //       this.setState({
+  //         courses: response.data
+  //       });
+  //     });
+  // }
 
   render() {
     // const courses = this.state.courses;
     // let titles;
 
     // titles = courses.map(course => <p>{course.title}</p>);
+    // console.log("titles",titles);
 
     return (
       <BrowserRouter>
@@ -51,7 +52,7 @@ class App extends Component {
             <Route exact path="/" render={() => <Courses  />} />
             <Route path="/courses/create" render={() => <CreateCourse  />} />
             <Route path="/courses/:id/update" render={() => <UpdateCourse  />} />
-            <Route path="/courses/:id" render={() => <CourseDetail  />} />
+            <Route path="/courses/:id" render={({match}) => <CourseDetail id={match.params.id}  />} />
             <Route path="/signin" render={() => <UserSignIn  />} />
             <Route path="/signup" render={() => <UserSignUp  />} />
             <Route path="/signout" render={() => <Courses  />} />
