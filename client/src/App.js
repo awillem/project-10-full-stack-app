@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import {Provider} from './Components/Context';
 import {
   Route,
   // Redirect,
@@ -6,7 +7,7 @@ import {
   Switch
 } from 'react-router-dom';
 import './css/global.css';
-// import axios from 'axios';
+import axios from 'axios';
 
 // Import components
 import Header from './Components/Header';
@@ -23,9 +24,38 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
-      courses: []
+      courses: [],
+      user: ""
     };
   }
+
+signIn = (email,pass) => {
+  console.log(user);
+  console.log(password);
+  let user = email;
+  let password = pass;
+  axios.get('http://localhost:5000/api/users', { 
+    auth: {
+      username: user,
+      password: password
+    }
+   })
+    .then(response => {
+      console.log("response",response);
+      this.setState({
+        user: response.data
+      });
+      console.log("state", this.state.user);
+    });
+}  
+
+signUp = () => {
+  
+} 
+
+signOut = () => {
+  
+} 
 
   // componentDidMount() {
   //   axios.get('http://localhost:5000/api/courses')
@@ -38,27 +68,30 @@ class App extends Component {
   // }
 
   render() {
-    // const courses = this.state.courses;
-    // let titles;
-
-    // titles = courses.map(course => <p>{course.title}</p>);
-    // console.log("titles",titles);
+    
 
     return (
-      <BrowserRouter>
-        <div>
-          <Header />
-          <Switch>
-            <Route exact path="/" render={() => <Courses  />} />
-            <Route path="/courses/create" render={() => <CreateCourse  />} />
-            <Route path="/courses/:id/update" render={() => <UpdateCourse  />} />
-            <Route path="/courses/:id" render={({match}) => <CourseDetail id={match.params.id}  />} />
-            <Route path="/signin" render={() => <UserSignIn  />} />
-            <Route path="/signup" render={() => <UserSignUp  />} />
-            <Route path="/signout" render={() => <Courses  />} />
-          </Switch>
-        </div>
-      </BrowserRouter>
+      <Provider value={{
+        user: this.state.user,
+        actions: {
+          signIn: this.signIn
+        }
+      }}>
+        <BrowserRouter>
+          <div>
+            <Header />
+            <Switch>
+              <Route exact path="/" render={() => <Courses  />} />
+              <Route path="/courses/create" render={() => <CreateCourse  />} />
+              <Route path="/courses/:id/update" render={() => <UpdateCourse  />} />
+              <Route path="/courses/:id" render={({match}) => <CourseDetail id={match.params.id}  />} />
+              <Route path="/signin" render={() => <UserSignIn  signIn={this.signIn}/>} />
+              <Route path="/signup" render={() => <UserSignUp  />} />
+              <Route path="/signout" render={() => <Courses  />} />
+            </Switch>
+          </div>
+        </BrowserRouter>
+      </Provider>
     );
   }
 }

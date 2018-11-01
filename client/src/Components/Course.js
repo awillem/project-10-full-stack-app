@@ -2,7 +2,6 @@ import React from 'react';
 import {Link} from 'react-router-dom';
 
 const Course = (props) => {
-    let url = "/courses/" + props.id;
     return (
         <div className="grid-33"><Link to={{
             pathname: `/courses/${props.id}`,
