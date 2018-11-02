@@ -1,5 +1,8 @@
 import React, {Component} from 'react';
-import {Consumer} from './Context';
+// import {Consumer} from './Context';
+import {
+    withRouter
+  } from 'react-router-dom';
 import {Link} from 'react-router-dom';
 
 class UserSignin extends Component {
@@ -23,14 +26,15 @@ class UserSignin extends Component {
     handleSubmit = e => {
         e.preventDefault();
         this.props.signIn(this.user.value,this.password.value);
+        this.props.history.push('/');
     }
 
     render() {      
-        // <Component>
+        // <Consumer>
         //     {context => (
                 
         //     )}
-        // </Component>
+        // </Consumer>
 
         return (
             <div className="bounds">
@@ -67,4 +71,4 @@ class UserSignin extends Component {
     }
 }
 
-export default UserSignin;
+export default withRouter(UserSignin);
