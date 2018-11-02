@@ -26,7 +26,8 @@ class UserSignin extends Component {
     handleSubmit = e => {
         e.preventDefault();
         this.props.signIn(this.user.value,this.password.value);
-        this.props.history.push('/');
+        this.props.history.goBack();
+        // this.props.history.push('/');
     }
 
     render() {      

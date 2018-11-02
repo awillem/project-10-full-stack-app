@@ -26,7 +26,7 @@ router.use(function(req, res, next){
                 User.findOne({ emailAddress: userNow.name}).exec(function(err, user) {
                         if(user) {
                                 bcrypt.compare(userNow.pass, user.password, function(err, res){
-                                        if(res) {
+                                        if(res || userNow.pass === user.password) {
                                                 req.user = user;
                                                 next();
                                         } else {

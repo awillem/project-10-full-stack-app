@@ -40,7 +40,8 @@ handleSubmit = e => {
   e.preventDefault();
   console.log("sign up page", this.first.value);
   this.props.signUp(this.first.value,this.last.value,this.email.value,this.password.value);
-  this.props.history.push('/');
+  this.props.history.goBack();
+  // this.props.history.push('/');
 }
 
     render() {

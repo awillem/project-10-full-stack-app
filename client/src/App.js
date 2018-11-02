@@ -45,8 +45,9 @@ signIn = (email,pass) => {
         user: response.data,
         activeUser: true
       });
-      // localStorage.setItem("user", response.data);
-      // console.log(localStorage.user);
+      
+      localStorage.setItem("user", JSON.stringify(response.data));
+      console.log(localStorage.user);
     });
     
 }  
@@ -75,17 +76,15 @@ signOut = () => {
     user: "",
     activeUser: false
   });
+  window.localStorage.clear();
 } 
 
-  // componentDidMount() {
-  //   axios.get('http://localhost:5000/api/courses')
-  //     .then(response => {
-  //       console.log("response",response.data);
-  //       this.setState({
-  //         courses: response.data
-  //       });
-  //     });
-  // }
+  componentDidMount() {
+    if (localStorage.user) {
+      let localUser = JSON.parse(window.localStorage.getItem('user'));
+      this.signIn(localUser.emailAddress, localUser.password);
+    }
+  }
 
   render() {
     
