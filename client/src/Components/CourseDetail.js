@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
+import {Link} from 'react-router-dom';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
+import UpdateDelete from './UpdateDelete';
 
 class CourseDetail extends Component {
     constructor() {
@@ -14,7 +16,6 @@ class CourseDetail extends Component {
     componentDidMount() {
         axios.get(`http://localhost:5000/api/courses/${this.props.id}`)
           .then(response => {
-            console.log("set state",response.data);
             this.setState({
                 id: response.data._id,
                 title: response.data.title,
@@ -30,16 +31,22 @@ class CourseDetail extends Component {
     
 
     render() {
-
+        let links;
+        let update = `/courses/${this.props.id}/update`;
+        let deleteCourse = `/courses/${this.props.id}/delete`;
+        if (this.props.activeUser) {
+            links = <UpdateDelete update={update} deleteCourse={deleteCourse}/>;
+        } else {
+            links = "";
+        }
         
         
-        console.log(this.props);
         return (
             <div>
                 <div className="actions--bar">
                 <div className="bounds">
-                    <div className="grid-100"><span><a className="button" href="/courses/update">Update Course</a><a className="button" href="#">Delete Course</a></span><a
-                        className="button button-secondary" href="index.html">Return to List</a></div>
+                    <div className="grid-100" id="links">{links}{/*<span><Link className="button" to="/courses/5bd91bd2bcd7de237857c903/update">Update Course</Link><Link className="button" to="courses/delete">Delete Course</Link></span>*/}<Link
+                        className="button button-secondary" to="/">Return to List</Link></div>
                 </div>
                 </div>
                 <div className="bounds course--detail">
@@ -63,18 +70,6 @@ class CourseDetail extends Component {
                         <li className="course--stats--list--item">
                         <h4>Materials Needed</h4>
                         <ReactMarkdown>{this.state.materials}</ReactMarkdown>
-                        {/* <ul>
-                            <li>1/2 x 3/4 inch parting strip</li>
-                            <li>1 x 2 common pine</li>
-                            <li>1 x 4 common pine</li>
-                            <li>1 x 10 common pine</li>
-                            <li>1/4 inch thick lauan plywood</li>
-                            <li>Finishing Nails</li>
-                            <li>Sandpaper</li>
-                            <li>Wood Glue</li>
-                            <li>Wood Filler</li>
-                            <li>Minwax Oil Based Polyurethane</li>
-                        </ul> */}
                         </li>
                     </ul>
                     </div>

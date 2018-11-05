@@ -18,6 +18,7 @@ import UserSignUp from './Components/UserSignUp';
 import UserSignOut from './Components/UserSignOut';
 import CreateCourse from './Components/CreateCourse';
 import UpdateCourse from './Components/UpdateCourse';
+import PrivateRoute from './Components/PrivateRoute';
 
 
 class App extends Component {
@@ -27,8 +28,9 @@ class App extends Component {
     this.state = {
       courses: [],
       user: "",
-      activeUser: false
-    };
+      activeUser: false,
+      loading: true
+    };        
   }
 
 signIn = (email,pass) => {
@@ -43,11 +45,11 @@ signIn = (email,pass) => {
     .then(response => {
       this.setState({
         user: response.data,
-        activeUser: true
+        activeUser: true,
+        loading: false
       });
       
       localStorage.setItem("user", JSON.stringify(response.data));
-      console.log(localStorage.user);
     });
     
 }  
@@ -57,7 +59,6 @@ signUp = (first, last, email, password) => {
   let lName = last;
   let eAddress = email;
   let  pass = password;
-  console.log("signUp", fName);
   axios.post('http://localhost:5000/api/users', {
     firstName: fName,
     lastName: lName,
@@ -79,36 +80,92 @@ signOut = () => {
   window.localStorage.clear();
 } 
 
+updateCourse = (uTitle, uDescription, uTime, uMaterials, id) => {
+  console.log(this.state.user.emailAddress, this.state.user.password);
+  let updateTitle = uTitle;
+  let updateDescription = uDescription;
+  let updateTime = uTime;
+  let updateMaterials = uMaterials;
+  let updateId = id;
+  let url = `http://localhost:5000/api/courses/${updateId}`;
+  let config = {
+    auth: {
+      username: this.state.user.emailAddress,
+      password: this.state.user.password
+    }
+  };
+  axios.put(url, {
+    title: updateTitle,
+    description: updateDescription,
+    estimatedTime: updateTime,
+    materialsNeeded: updateMaterials
+  },
+  config);  
+}
+
+createCourse = (cTitle, cDescription, cTime, cMaterials) => {
+  let createTitle = cTitle;
+  let createDescription = cDescription;
+  let createTime = cTime;
+  let createMaterials = cMaterials;
+  let config = {
+    auth: {
+      username: this.state.user.emailAddress,
+      password: this.state.user.password
+    }
+  };
+  axios.post('http://localhost:5000/api/courses', {
+    title: createTitle,
+    description: createDescription,
+    estimatedTime: createTime,
+    materialsNeeded: createMaterials
+  },
+  config)
+  .catch(error => {
+    console.log('Error', error);
+  });
+}
+
+
   componentDidMount() {
     if (localStorage.user) {
       let localUser = JSON.parse(window.localStorage.getItem('user'));
       this.signIn(localUser.emailAddress, localUser.password);
+    } else {
+      this.setState({
+        loading: false
+      });
     }
   }
 
-  render() {
-    
-
+  render() {   
     return (
       <Provider value={{
         user: this.state.user,
         activeUser: this.state.activeUser,
         actions: {
-          signIn: this.signIn
+          signIn: this.signIn,
+          update: this.updateCourse,
+          create: this.createCourse
         }
       }}>
         <BrowserRouter>
           <div>
             <Header user={this.state.user} />
-            <Switch>
-              <Route exact path="/" render={() => <Courses  />} />
-              <Route path="/courses/create" render={() => <CreateCourse  />} />
-              <Route path="/courses/:id/update" render={() => <UpdateCourse  />} />
-              <Route path="/courses/:id" render={({match}) => <CourseDetail id={match.params.id}  />} />
-              <Route path="/signin" render={() => <UserSignIn signIn={this.signIn}/>} />
-              <Route path="/signup" render={() => <UserSignUp signUp={this.signUp} />} />
-              <Route path="/signout" render={() => <UserSignOut signOut={this.signOut} />} />
-            </Switch>
+            { 
+              (this.state.loading)
+              ? <p>Loading...</p>
+              :<Switch>
+                <Route exact path="/" render={() => <Courses  />} />
+                <Route exact path="/courses" render={() => <Courses  />} />
+                <PrivateRoute path="/courses/create" component={CreateCourse} createCourse={this.createCourse} /*render={() => <CreateCourse   />}*/ />
+                <PrivateRoute path="/courses/:id/update" update={this.updateCourse} component={UpdateCourse}   /*render={({match}) => <UpdateCourse id={match.params.id} UpdateCourse={this.updateCourse}*/ />} />
+                <Route path="/courses/:id" render={({match}) => <CourseDetail id={match.params.id} activeUser={this.state.activeUser} />} />
+                <Route path="/signin" render={() => <UserSignIn signIn={this.signIn}/>} />
+                <Route path="/signup" render={() => <UserSignUp signUp={this.signUp} />} />
+                <Route path="/signout" render={() => <UserSignOut signOut={this.signOut} />} />
+              </Switch>
+            }
           </div>
         </BrowserRouter>
       </Provider>
