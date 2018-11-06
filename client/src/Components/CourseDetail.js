@@ -20,6 +20,7 @@ class CourseDetail extends Component {
                 id: response.data._id,
                 title: response.data.title,
                 user: `${response.data.user.firstName} ${response.data.user.lastName}`,
+                userId: response.data.user._id,
                 description: response.data.description,
                 time: response.data.estimatedTime,
                 materials: response.data.materialsNeeded
@@ -33,9 +34,8 @@ class CourseDetail extends Component {
     render() {
         let links;
         let update = `/courses/${this.props.id}/update`;
-        let deleteCourse = `/courses/${this.props.id}/delete`;
-        if (this.props.activeUser) {
-            links = <UpdateDelete update={update} deleteCourse={deleteCourse}/>;
+        if (this.props.user._id === this.state.userId) {
+            links = <UpdateDelete update={update} deleteCourse={this.props.deleteCourse} user={this.props.user} id={this.props.id}/>;
         } else {
             links = "";
         }

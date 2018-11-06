@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {Provider} from './Components/Context';
 import {
   Route,
-  // Redirect,
   BrowserRouter,
   Switch
 } from 'react-router-dom';
@@ -103,28 +102,43 @@ updateCourse = (uTitle, uDescription, uTime, uMaterials, id) => {
   config);  
 }
 
-createCourse = (cTitle, cDescription, cTime, cMaterials) => {
-  let createTitle = cTitle;
-  let createDescription = cDescription;
-  let createTime = cTime;
-  let createMaterials = cMaterials;
-  let config = {
-    auth: {
-      username: this.state.user.emailAddress,
-      password: this.state.user.password
-    }
-  };
-  axios.post('http://localhost:5000/api/courses', {
-    title: createTitle,
-    description: createDescription,
-    estimatedTime: createTime,
-    materialsNeeded: createMaterials
-  },
-  config)
-  .catch(error => {
-    console.log('Error', error);
-  });
-}
+// deleteCourse = (deleteId) => {
+//   let url = `http://localhost:5000/api/courses/${deleteId}`
+//   console.log("inside",url);
+//   axios.delete(url,{
+//     auth: {
+//       username: this.state.user.emailAddress,
+//       password: this.state.user.password
+//     }
+//   });
+// }
+
+// createCourse = (cTitle, cDescription, cTime, cMaterials) => {
+//   let createTitle = cTitle;
+//   let createDescription = cDescription;
+//   let createTime = cTime;
+//   let createMaterials = cMaterials;
+//   let config = {
+//     auth: {
+//       username: this.state.user.emailAddress,
+//       password: this.state.user.password
+//     }
+//   };
+//   axios.post('http://localhost:5000/api/courses', {
+//     title: createTitle,
+//     description: createDescription,
+//     estimatedTime: createTime,
+//     materialsNeeded: createMaterials
+//   },
+//   config)
+//   .then(response => {
+//     let id = response.data.id;
+//      return id;
+//   })
+//   .catch(error => {
+//     console.log('Error', error);
+//   });
+// }
 
 
   componentDidMount() {
@@ -158,9 +172,9 @@ createCourse = (cTitle, cDescription, cTime, cMaterials) => {
               :<Switch>
                 <Route exact path="/" render={() => <Courses  />} />
                 <Route exact path="/courses" render={() => <Courses  />} />
-                <PrivateRoute path="/courses/create" component={CreateCourse} createCourse={this.createCourse} /*render={() => <CreateCourse   />}*/ />
-                <PrivateRoute path="/courses/:id/update" update={this.updateCourse} component={UpdateCourse}   /*render={({match}) => <UpdateCourse id={match.params.id} UpdateCourse={this.updateCourse}*/ />} />
-                <Route path="/courses/:id" render={({match}) => <CourseDetail id={match.params.id} activeUser={this.state.activeUser} />} />
+                <PrivateRoute path="/courses/create" component={CreateCourse} user={this.state.user}  /*render={() => <CreateCourse   />}*/ />
+                <PrivateRoute path="/courses/:id/update" update={this.updateCourse}  component={UpdateCourse}   /*render={({match}) => <UpdateCourse id={match.params.id} UpdateCourse={this.updateCourse}*/ />} />
+                <Route path="/courses/:id" render={({match}) => <CourseDetail id={match.params.id} user={this.state.user} activeUser={this.state.activeUser}  />} />
                 <Route path="/signin" render={() => <UserSignIn signIn={this.signIn}/>} />
                 <Route path="/signup" render={() => <UserSignUp signUp={this.signUp} />} />
                 <Route path="/signout" render={() => <UserSignOut signOut={this.signOut} />} />

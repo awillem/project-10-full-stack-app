@@ -153,8 +153,11 @@ router.post("/courses", (req, res, next) => {
                 });
                 course.save(function(err, course){
                         if(err) return next();
-                        res.location('/'); 
-                        res.sendStatus(201);       
+                        let url = `/courses/${course._id}`;
+                        res.locals.id = course._id;
+                        res.location(`url`); 
+                        // res.json({ id: id});
+                        res.status(201).send({id: course._id});       
                 });
         }
         

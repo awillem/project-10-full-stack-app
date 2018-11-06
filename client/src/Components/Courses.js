@@ -22,14 +22,7 @@ class Courses extends Component {
           });
       }
 
-    // shouldComponentUpdate(nextProps, nextState) {
-    //     axios.get('http://localhost:5000/api/courses')
-    //         .then(response => {
-    //             this.setState({
-    //                 courses: response.data
-    //             });
-    //         });
-    // }
+
 
       
     render() {
