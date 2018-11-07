@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 import axios from 'axios';
+import ValidationError from './ValidationError';
 
 class UpdateCourse extends Component {
     constructor() {
@@ -27,7 +28,15 @@ class UpdateCourse extends Component {
                 description: response.data.description,
                 time: response.data.estimatedTime,
                 materials: response.data.materialsNeeded
-            });            
+            });    
+            console.log("response",response);
+            if(response.data.user._id !== this.props.user._id) {
+                this.props.history.push('/forbidden');
+            }
+        })
+        .catch(error => {
+            console.log("course",error);
+            this.props.history.push('/notfound');
         });
     }
 
@@ -47,26 +56,64 @@ class UpdateCourse extends Component {
         this.setState({ materials: e.target.value});
     }
 
+    updateCourse = (uTitle, uDescription, uTime, uMaterials, id) => {
+        console.log(this.state.user.emailAddress, this.state.user.password);
+        let updateTitle = uTitle;
+        let updateDescription = uDescription;
+        let updateTime = uTime;
+        let updateMaterials = uMaterials;
+        let updateId = id;
+        let url = `http://localhost:5000/api/courses/${updateId}`;
+        let config = {
+          auth: {
+            username: this.props.user.emailAddress,
+            password: this.props.user.password
+          }
+        };
+        axios.put(url, {
+          title: updateTitle,
+          description: updateDescription,
+          estimatedTime: updateTime,
+          materialsNeeded: updateMaterials
+        },
+        config)
+        .then(response => {
+            
+        // this.props.history.goBack();
+        this.props.history.push(`/courses/${this.state.id}`);
+        })
+        .catch(error => {
+            this.setState({
+              validationError: true,
+              error: error.response.data.error.errors
+            });
+            console.log('Error', error.response.data.error.errors);
+          });  
+      }
+
     
 
     handleSubmit = e => {
         e.preventDefault();
-        // console.log("title.value", this.title.value);
-        console.log("props", this);
-        console.log("props2", this.props.update);
-        this.props.update(this.state.title,this.state.description,this.state.time,this.state.materials, this.state.id);
+        this.updateCourse(this.state.title,this.state.description,this.state.time,this.state.materials, this.state.id);
 
-       
-
-        this.props.history.goBack();
-        // this.props.history.push('/');
       }
 
     render() {
+       
+
+        let validation;
+        if (this.state.validationError) {
+          validation = <ValidationError error={this.state.error}/>
+        } else {
+          validation = "";
+        }
+        console.log(this.state.id);
         return (
         <div className="bounds course--detail">
             <h1>Update Course</h1>
             <div>
+                {validation}
             <form onSubmit={this.handleSubmit}>
                 <div className="grid-66">
                 <div className="course--header">

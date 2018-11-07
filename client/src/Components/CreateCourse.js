@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {Link,  withRouter} from 'react-router-dom';
 import axios from 'axios';
+import ValidationError from './ValidationError';
 
 class CreateCourse extends Component {
   constructor() {
@@ -13,7 +14,9 @@ class CreateCourse extends Component {
         materials: "",
         id: "",
         redirect: false,
-        newId: ""
+        newId: "",
+        validationError: false,
+        error: ""
     };
 }
 
@@ -56,7 +59,11 @@ createCourse = (cTitle, cDescription, cTime, cMaterials) => {
 
   })
   .catch(error => {
-    console.log('Error', error);
+    this.setState({
+      validationError: true,
+      error: error.response.data.error.errors
+    });
+    console.log('Error', error.response.data.error.errors);
   });
 }
 
@@ -72,11 +79,20 @@ handleSubmit = e => {
 
 
     render() {
+      let validation;
+      if (this.state.validationError) {
+        validation = <ValidationError error={this.state.error}/>
+      } else {
+        validation = "";
+      }
+      console.log(this.state.errors);
+
       return (
           <div className="bounds course--detail">
           <h1>Create Course</h1>
           <div>
-            <div>
+            {validation}
+            {/* <div>
               <h2 className="validation--errors--label">Validation errors</h2>
               <div className="validation-errors">
                 <ul>
@@ -84,7 +100,7 @@ handleSubmit = e => {
                   <li>Please provide a value for "Description"</li>
                 </ul>
               </div>
-            </div>
+            </div> */}
             <form onSubmit={this.handleSubmit}>
               <div className="grid-66">
                 <div className="course--header">

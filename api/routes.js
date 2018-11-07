@@ -79,22 +79,22 @@ router.get("/users", (req, res, next) => {
 
 // POST /api/users 201 - Creates a user, sets the Location header to "/", and returns no content
 router.post("/users",  (req, res, next) => {
-        let email = req.body.emailAddress;
-        if(!email){
-                const error = new Error("Email required");
-                        error.status = 400;
-                        next(error); 
-        } else {
-                User.find({emailAddress: req.body.emailAddress}, function(err,users){
-                        if (users.length !==0) {
-                                const error = new Error("Email already exists");
-                                error.status = 400;
-                                next(error); 
-                        } else if (!validateEmail(req.body.emailAddress)) {
-                                const error = new Error("Email not valid");
-                                        error.status = 400;
-                                        next(error); 
-                        } else {
+        // let email = req.body.emailAddress;
+        // if(!email){
+        //         const error = new Error("Email required");
+        //                 error.status = 400;
+        //                 return next(error); 
+        // } else {
+        //         User.find({emailAddress: req.body.emailAddress}, function(err,users){
+        //                 if (users.length !==0) {
+        //                         const error = new Error("Email already exists");
+        //                         error.status = 400;
+        //                         next(error); 
+        //                 } else if (!validateEmail(req.body.emailAddress)) {
+        //                         const error = new Error("Email not valid");
+        //                                 error.status = 400;
+        //                                 next(error); 
+        //                 } else {
                                 var user = new User(req.body);
                                 user.validate(function (err, req, res) {
                                         if (err && err.name === "ValidationError") {
@@ -102,6 +102,17 @@ router.post("/users",  (req, res, next) => {
                                                 return next(err);
                                         } 
                                 });
+                                User.find({emailAddress: req.body.emailAddress}, function(err,users){
+                                                        if (users.length !==0) {
+                                                                const error = new Error("Email already exists");
+                                                                error.status = 400;
+                                                                next(error); 
+                                                        } else if (!validateEmail(req.body.emailAddress)) {
+                                                                const error = new Error("Email not valid");
+                                                                        error.status = 400;
+                                                                        next(error); 
+                                                        } else {
+
                                 user.save(function(err, user){
                                         if(err) return next();
                                         res.location('/');                   
@@ -109,7 +120,7 @@ router.post("/users",  (req, res, next) => {
                                 });
                         }
                 });
-        }
+        // }
 });
 
 
@@ -130,7 +141,7 @@ router.get("/courses", (req, res, next) => {
 router.get("/courses/:id", (req, res, next) => {
     Course.findById(req.params.id).populate('user', 'firstName lastName').exec(function(err, courses){
         if(err) return next(err);
-            res.json(courses);
+                res.json(courses);
     });
 });
 
@@ -147,6 +158,13 @@ router.post("/courses", (req, res, next) => {
         
                 course.validate(function (err, req, res) {
                         if (err && err.name === "ValidationError") {
+                                console.log("error",err);
+                                if(err.errors.title) {
+                                        console.log(err.errors.title.path);
+                                } else {
+                                        console.log("no");
+                                }
+                                err.message = 'title';
                                 err.status = 400;
                                 return next(err);
                         } 

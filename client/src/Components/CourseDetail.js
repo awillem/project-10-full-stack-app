@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Link} from 'react-router-dom';
+import {Link, withRouter} from 'react-router-dom';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 import UpdateDelete from './UpdateDelete';
@@ -26,6 +26,10 @@ class CourseDetail extends Component {
                 materials: response.data.materialsNeeded
             });
             
+          })
+          .catch(error => {
+              console.log("course",error);
+              this.props.history.push('/notfound');
           });
       }
 
@@ -45,8 +49,8 @@ class CourseDetail extends Component {
             <div>
                 <div className="actions--bar">
                 <div className="bounds">
-                    <div className="grid-100" id="links">{links}{/*<span><Link className="button" to="/courses/5bd91bd2bcd7de237857c903/update">Update Course</Link><Link className="button" to="courses/delete">Delete Course</Link></span>*/}<Link
-                        className="button button-secondary" to="/">Return to List</Link></div>
+                    <div className="grid-100" id="links">{links}{/*<span><Link className="button" to="/courses/5bd91bd2bcd7de237857c903/update">Update Course</Link><Link className="button" to="courses/delete">Delete Course</Link></span>*/}
+                    <Link className="button button-secondary" to="/">Return to List</Link></div>
                 </div>
                 </div>
                 <div className="bounds course--detail">
@@ -80,4 +84,4 @@ class CourseDetail extends Component {
     }
 }
 
-export default CourseDetail;
+export default withRouter(CourseDetail);

@@ -8,7 +8,6 @@ import {Consumer} from './Context';
 
 
 const PrivateRoute = ({component: Component, ...rest}) => {
-   console.log("stuff");
 
     return (
         <Consumer>

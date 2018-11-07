@@ -2,7 +2,9 @@ import React, {Component} from 'react';
 import {
   withRouter
 } from 'react-router-dom';
-import {Link} from 'react-router-dom'
+import {Link} from 'react-router-dom';
+import ValidationError from "./ValidationError";
+import axios from 'axios';
 
 class UserSignUp extends Component {
 
@@ -13,9 +15,13 @@ class UserSignUp extends Component {
       password: "",
       passwordConfirm: "",
       firstName: "",
-      lastName: ""
+      lastName: "",
+      validationError: "",
+      error: ""
     };
   }
+
+  
 
 onUserChange = e => {
     this.setState({ user: e.target.value});
@@ -26,7 +32,22 @@ onPasswordChange = e => {
 }
 onPasswordConfirmChange = e => {
   this.setState({ passwordConfirm: e.target.value});
+  if (e.target.value !== this.state.password) {
+    e.target.style.border = 'red 1px solid';
+    this.setState({
+      validationError: true,
+      error: 'noMatch'
+    });
+   
+  } else {
+    e.target.style.border = '1px solid #ccc4d8';
+    this.setState({
+      validationError: false,
+      error: 'noMatch'
+    });
+  }
 }
+
 
 onFirstNameChange = e => {
   this.setState({ firstName: e.target.value});
@@ -36,19 +57,79 @@ onLastNameChange = e => {
   this.setState({ lastName: e.target.value});
 }
 
+
+
+signUp = (first, last, email, password) => {
+  let fName = first;
+  let lName = last;
+  let eAddress = email;
+  let  pass = password;
+  axios.post('http://localhost:5000/api/users', {
+    firstName: fName,
+    lastName: lName,
+    emailAddress: eAddress,
+    password: pass
+  })
+  .then(response => {
+    if (response.status === 201) {
+      this.setState({
+        validationError: false,
+        signUpError: ""
+      });
+      this.props.signIn(eAddress, pass);
+    }
+  })
+  .then( response => {
+    this.props.history.push(`/courses/${response.data.id}`);
+  })
+  .catch(error => {
+   if (error.response.data.error.name === "ValidationError") {
+    this.setState({
+      validationError: true,
+      error: error.response.data.error.errors
+    });
+  } else if (error.response.data.message ==="Email already exists") {
+    this.setState({
+      validationError: true,
+      error: 'alreadyExists'
+    });
+  } else if (error.response.data.message ==="Email not valid") {
+    this.setState({
+      validationError: true,
+      error: 'notValid'
+    });
+  } else if (error.status === 500) {
+    this.props.history.push('/error');
+  }
+     console.log('Error', error.response);
+  });
+}
+
 handleSubmit = e => {
   e.preventDefault();
-  console.log("sign up page", this.first.value);
-  this.props.signUp(this.first.value,this.last.value,this.email.value,this.password.value);
-  this.props.history.goBack();
+  if (this.state.password === this.state.passwordConfirm) {
+  this.signUp(this.first.value,this.last.value,this.email.value,this.password.value);
+  }
+  
+  // this.props.history.goBack();
   // this.props.history.push('/');
 }
 
     render() {
+      
+
+      let validation;
+      if (this.state.validationError) {
+        validation = <ValidationError error={this.state.error}/>
+      } else {
+        validation = "";
+      }
+
         return (
             <div className="bounds">
             <div className="grid-33 centered signin">
               <h1>Sign Up</h1>
+              {validation}
               <div>
                 <form onSubmit={this.handleSubmit}>
                   <div><input 
@@ -87,16 +168,16 @@ handleSubmit = e => {
                           value={this.state.password} 
                           onChange={this.onPasswordChange}
                           ref={(input) => this.password = input} /></div>
-                  <div><input 
+                  <div id="confirmPasswordDiv"><input 
                           id="confirmPassword" 
                           name="confirmPassword" 
                           type="password" 
                           className="" 
                           placeholder="Confirm Password"                      
                           value={this.state.passwordConfirm} 
-                          onChange={this.onPasswordConfirmChange} /></div>
+                          onChange={this.onPasswordConfirmChange} />                          </div>
 
-                  <div className="grid-100 pad-bottom"><button className="button" type="submit">Sign Up</button><Link to="/"><button className="button button-secondary">Cancel</button></Link></div>
+                  <div className="grid-100 pad-bottom" ><button className="button" type="submit">Sign Up</button><Link to="/"><button className="button button-secondary">Cancel</button></Link></div>
                 </form>
               </div>
               <p>&nbsp;</p>
