@@ -19,6 +19,9 @@ class Courses extends Component {
             this.setState({
               courses: response.data
             });
+          })
+          .catch(error => {
+            return window.location.href = "/error";
           });
       }
 

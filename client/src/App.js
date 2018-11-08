@@ -3,7 +3,8 @@ import {Provider} from './Components/Context';
 import {
   Route,
   BrowserRouter,
-  Switch
+  Switch,
+  Redirect
 } from 'react-router-dom';
 import './css/global.css';
 import axios from 'axios';
@@ -31,13 +32,19 @@ class App extends Component {
       courses: [],
       user: "",
       activeUser: false,
-      loading: true
+      loading: true,
+      userInvalid: false,
+      passwordInvalid: false
     };        
   }
 
-signIn = (email,pass) => {
+signIn = (email,pass, emailInput=0, passwordInput=0) => {
   let user = email;
   let password = pass;
+  this.setState({
+    userInvalid: false,
+    passwordInvalid: false
+  });
   axios.get('http://localhost:5000/api/users', { 
     auth: {
       username: user,
@@ -45,16 +52,34 @@ signIn = (email,pass) => {
     }
    })
     .then(response => {
-      this.setState({
-        user: response.data,
-        activeUser: true,
-        loading: false
-      });
-      console.log("stuff2",this.state);
-      localStorage.setItem("user", JSON.stringify(response.data));
+      if (response.status === 304 || response.status === 200) {
+        this.setState({
+          user: response.data,
+          activeUser: true,
+          loading: false,
+          validationError: false,
+          userInvalid: false,
+          passwordInvalid: false
+        });
+        localStorage.setItem("user", JSON.stringify(response.data));
+      }  
     })
     .catch(error => {
-      console.log(this.props);
+      console.log("error", error.response);
+      if (error.response.status === 401) {
+        console.log('status',error.response.status);
+        if (error.response.data.message === "User not valid") {
+          this.setState({
+            userInvalid: true
+          });
+        } else if (error.response.data.message === "Password not valid") {
+          this.setState({
+            passwordInvalid: true
+          });
+        }
+      } else {
+        return window.location.href = "/error";
+      }
     });
     
 }  
@@ -88,6 +113,8 @@ signOut = () => {
       <Provider value={{
         user: this.state.user,
         activeUser: this.state.activeUser,
+        passwordInvalid: this.state.passwordInvalid,
+        userInvalid: this.state.userInvalid,
         actions: {
           signIn: this.signIn,
           update: this.updateCourse,
@@ -106,12 +133,12 @@ signOut = () => {
                 <PrivateRoute path="/courses/create" component={CreateCourse} user={this.state.user}  /*render={() => <CreateCourse   />}*/ />
                 <PrivateRoute path="/courses/:id/update" update={this.updateCourse}  user={this.state.user} component={UpdateCourse}   /*render={({match}) => <UpdateCourse id={match.params.id} UpdateCourse={this.updateCourse}*/ />} />
                 <Route path="/courses/:id" render={({match}) => <CourseDetail id={match.params.id} user={this.state.user} activeUser={this.state.activeUser}  />} />
-                <Route path="/signin" render={() => <UserSignIn signIn={this.signIn}/>} />
+                <Route path="/signin" render={() => <UserSignIn signIn={this.signIn} error={this.state.error} activeUser={this.activeUser} userInvalid={this.state.userInvalid} passwordInvalid={this.passwordInvalid} />} />
                 <Route path="/signup" render={() => <UserSignUp signIn={this.signIn} error={this.state.signUpError} validationError={this.state.validationError}/>} />
                 <Route path="/signout" render={() => <UserSignOut signOut={this.signOut} />} />
                 <Route path="/notfound" render={() => <NotFound />} />
                 <Route path="/forbidden" render={() => <Forbidden />} />
-            <Route path="error" render={() => <Error />} />
+            <Route path="/error" render={() => <Error />} />
                 <Route component={NotFound}/>
               </Switch>
             }

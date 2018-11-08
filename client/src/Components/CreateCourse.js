@@ -59,11 +59,15 @@ createCourse = (cTitle, cDescription, cTime, cMaterials) => {
 
   })
   .catch(error => {
-    this.setState({
-      validationError: true,
-      error: error.response.data.error.errors
-    });
-    console.log('Error', error.response.data.error.errors);
+    if (error.response.status === 400){
+      this.setState({
+        validationError: true,
+        error: error.response.data.error.errors
+      });
+      console.log('Error', error.response.data.error.errors);
+    } else {
+      this.props.history.push('/error');
+    }
   });
 }
 

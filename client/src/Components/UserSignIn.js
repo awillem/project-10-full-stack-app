@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
-// import {Consumer} from './Context';
+import {Consumer} from './Context';
 import {
-    withRouter
+    withRouter,
+    Redirect,
   } from 'react-router-dom';
 import {Link} from 'react-router-dom';
 
@@ -25,19 +26,36 @@ class UserSignin extends Component {
 
     handleSubmit = e => {
         e.preventDefault();
-        this.props.signIn(this.user.value,this.password.value);
-        this.props.history.goBack();
+        let emailInput = document.getElementById('emailAddress');
+      let passwordInput = document.getElementById('password');
+        this.props.signIn(this.user.value,this.password.value, emailInput, passwordInput);
+        // this.props.history.goBack();
         // this.props.history.push('/');
     }
 
     render() {      
-        // <Consumer>
-        //     {context => (
-                
-        //     )}
-        // </Consumer>
-
         return (
+            <Consumer >
+                {context => {
+                    console.log("context",context);
+                    // function validation(context) {
+                        let userInput = document.getElementById('emailAddress');
+                        let passwordInput = document.getElementById('password');
+                        if (context.activeUser) {
+                            this.props.history.goBack();
+                        } else if (context.userInvalid) {
+                            
+                            userInput.style.border = 'red 1px solid';
+                        } else if (context.passwordInvalid) {
+                            userInput.style.border = '#ccc4d8 1px solid';
+                            passwordInput.style.border = 'red 1px solid';
+                        }
+                    // }
+                    // validation(context);
+                    // userInput.style.border = '1px solid #ccc4d8';
+                    
+
+                    return(
             <div className="bounds">
                 <div className="grid-33 centered signin">
                     <h1>Sign In</h1>
@@ -68,6 +86,9 @@ class UserSignin extends Component {
                     <p>Don't have a user account? <Link to="/signUp">Click here</Link> to sign up!</p>
                 </div>
             </div>
+                    );
+            }}
+            </Consumer>
         );
     }
 }

@@ -55,12 +55,15 @@ router.use(function(req, res, next){
 
 router.param("id", function(req, res, next, id) {
         Course.findById(id, function(err, doc){
-            if(err) return next();
-            if(!doc) {
-                err = new Error("Not Found");
-                err.status = 404;
-                return next(err);
+                if(!doc) {
+                        err = new Error("Not Found");
+                        err.status = 404;
+                        return next(err);
+                    } else if(err) {
+                    err.status = 505;
+                    return next(err);
             }
+            
             req.course = doc;
             return next();
         });
@@ -128,7 +131,10 @@ router.post("/users",  (req, res, next) => {
 // GET /api/courses 200 - Returns a list of courses (including the user that owns each course)
 router.get("/courses", (req, res, next) => {
         Course.find({}).populate('user', 'firstName lastName').select({"title": 1, "user":1}).exec(function(err, courses){
-            if(err) return next(err);
+            if(err) {
+                err.status = 404;    
+                return next(err);
+        }
                 res.status(200);
                 res.json(courses);
         });

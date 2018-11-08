@@ -15,6 +15,9 @@ class UpdateDelete extends Component {
         .then(response => {
             
         this.props.history.push('/');
+        })
+        .catch(error => {
+            this.props.history.push('/');
         });
       }
 

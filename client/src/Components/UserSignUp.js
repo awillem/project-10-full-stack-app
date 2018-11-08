@@ -80,28 +80,34 @@ signUp = (first, last, email, password) => {
     }
   })
   .then( response => {
-    this.props.history.push(`/courses/${response.data.id}`);
+    this.props.history.goBack();
   })
   .catch(error => {
-   if (error.response.data.error.name === "ValidationError") {
-    this.setState({
-      validationError: true,
-      error: error.response.data.error.errors
-    });
-  } else if (error.response.data.message ==="Email already exists") {
-    this.setState({
-      validationError: true,
-      error: 'alreadyExists'
-    });
-  } else if (error.response.data.message ==="Email not valid") {
-    this.setState({
-      validationError: true,
-      error: 'notValid'
-    });
-  } else if (error.status === 500) {
-    this.props.history.push('/error');
-  }
+    console.log(error.response.status);
+    if (error.response.status === 400){
+      console.log("error",error.response);
+    if (error.response.data.error.name === "ValidationError") {
+      this.setState({
+        validationError: true,
+        error: error.response.data.error.errors
+      });
+    } else if (error.response.data.message ==="Email already exists") {
+      this.setState({
+        validationError: true,
+        error: 'alreadyExists'
+      });
+    } else if (error.response.data.message ==="Email not valid") {
+      this.setState({
+        validationError: true,
+        error: 'notValid'
+      });
+    } else if (error.response.status === 500) {
+      this.props.history.push('/error');
+    }
+  } else {
      console.log('Error', error.response);
+     this.props.history.push('/error');
+  }
   });
 }
 
