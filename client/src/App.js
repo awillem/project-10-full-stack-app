@@ -82,8 +82,7 @@ signIn = (email,pass) => {
           });
         }
       } else {
-        this.props.history.push('/error');
-        // return window.location.href = "/error";
+        return window.location.href = "/error";
       }
     });
     
