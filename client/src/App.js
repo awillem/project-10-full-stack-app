@@ -3,8 +3,7 @@ import {Provider} from './Components/Context';
 import {
   Route,
   BrowserRouter,
-  Switch,
-  Redirect
+  Switch
 } from 'react-router-dom';
 import './css/global.css';
 import axios from 'axios';
@@ -65,9 +64,7 @@ signIn = (email,pass, emailInput=0, passwordInput=0) => {
       }  
     })
     .catch(error => {
-      console.log("error", error.response);
       if (error.response.status === 401) {
-        console.log('status',error.response.status);
         if (error.response.data.message === "User not valid") {
           this.setState({
             userInvalid: true

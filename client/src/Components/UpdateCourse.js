@@ -17,8 +17,6 @@ class UpdateCourse extends Component {
     }
 
     componentDidMount() {
-        // console.log(this.props);
-        // console.log(this.props.match.params.id);
         axios.get(`http://localhost:5000/api/courses/${this.props.match.params.id}`)
           .then(response => {
             this.setState({
@@ -28,14 +26,12 @@ class UpdateCourse extends Component {
                 description: response.data.description,
                 time: response.data.estimatedTime,
                 materials: response.data.materialsNeeded
-            });    
-            console.log("response",response);
+            });  
             if(response.data.user._id !== this.props.user._id) {
                 this.props.history.push('/forbidden');
             }
         })
         .catch(error => {
-            console.log("course",error);
             this.props.history.push('/notfound');
         });
     }
@@ -57,7 +53,6 @@ class UpdateCourse extends Component {
     }
 
     updateCourse = (uTitle, uDescription, uTime, uMaterials, id) => {
-        console.log(this.state.user.emailAddress, this.state.user.password);
         let updateTitle = uTitle;
         let updateDescription = uDescription;
         let updateTime = uTime;
@@ -88,7 +83,6 @@ class UpdateCourse extends Component {
                 validationError: true,
                 error: error.response.data.error.errors
                 });
-                console.log('Error', error.response.data.error.errors);
             } else {
                 this.props.history.push('/error');
             }
@@ -112,7 +106,7 @@ class UpdateCourse extends Component {
         } else {
           validation = "";
         }
-        console.log(this.state.id);
+
         return (
         <div className="bounds course--detail">
             <h1>Update Course</h1>

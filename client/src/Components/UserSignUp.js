@@ -83,9 +83,7 @@ signUp = (first, last, email, password) => {
     this.props.history.goBack();
   })
   .catch(error => {
-    console.log(error.response.status);
     if (error.response.status === 400){
-      console.log("error",error.response);
     if (error.response.data.error.name === "ValidationError") {
       this.setState({
         validationError: true,
@@ -105,7 +103,6 @@ signUp = (first, last, email, password) => {
       this.props.history.push('/error');
     }
   } else {
-     console.log('Error', error.response);
      this.props.history.push('/error');
   }
   });

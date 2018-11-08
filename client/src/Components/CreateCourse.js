@@ -64,7 +64,6 @@ createCourse = (cTitle, cDescription, cTime, cMaterials) => {
         validationError: true,
         error: error.response.data.error.errors
       });
-      console.log('Error', error.response.data.error.errors);
     } else {
       this.props.history.push('/error');
     }
@@ -89,7 +88,6 @@ handleSubmit = e => {
       } else {
         validation = "";
       }
-      console.log(this.state.errors);
 
       return (
           <div className="bounds course--detail">

@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
 import {Consumer} from './Context';
 import {
-    withRouter,
-    Redirect,
+    withRouter
   } from 'react-router-dom';
 import {Link} from 'react-router-dom';
 
@@ -37,7 +36,6 @@ class UserSignin extends Component {
         return (
             <Consumer >
                 {context => {
-                    console.log("context",context);
                     // function validation(context) {
                         let userInput = document.getElementById('emailAddress');
                         let passwordInput = document.getElementById('password');

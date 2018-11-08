@@ -2,7 +2,6 @@ import React from 'react';
 
 const ValidationError = props => {
     let error = props.error;
-    console.log(error);
     // let ul = "";
     let title;
     let description;
