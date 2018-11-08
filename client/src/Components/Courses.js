@@ -13,6 +13,8 @@ class Courses extends Component {
         };
     }
 
+
+    // loads course list.  if error, routes to /error
     componentDidMount() {
         axios.get('http://localhost:5000/api/courses')
           .then(response => {
@@ -30,6 +32,7 @@ class Courses extends Component {
       
     render() {
 
+        // maps through courses and adds each one to the Course component
         const courses = this.state.courses;
         let courseModules;
         if (courses.length > 0) {

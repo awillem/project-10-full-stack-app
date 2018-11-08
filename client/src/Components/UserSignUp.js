@@ -22,7 +22,7 @@ class UserSignUp extends Component {
   }
 
   
-
+//adds functionality for text fields
 onUserChange = e => {
     this.setState({ user: e.target.value});
 }
@@ -30,6 +30,8 @@ onUserChange = e => {
 onPasswordChange = e => {
     this.setState({ password: e.target.value});
 }
+
+// if confirm password doesn't match password, adds error indicators and message
 onPasswordConfirmChange = e => {
   this.setState({ passwordConfirm: e.target.value});
   if (e.target.value !== this.state.password) {
@@ -58,7 +60,9 @@ onLastNameChange = e => {
 }
 
 
-
+// post request to sign up user.  
+//if validation error, changes validationError flag to true, and pass error information to ValidationError component
+// other errors route to /error
 signUp = (first, last, email, password) => {
   let fName = first;
   let lName = last;
@@ -113,14 +117,11 @@ handleSubmit = e => {
   if (this.state.password === this.state.passwordConfirm) {
   this.signUp(this.first.value,this.last.value,this.email.value,this.password.value);
   }
-  
-  // this.props.history.goBack();
-  // this.props.history.push('/');
 }
 
     render() {
       
-
+      //if validationError, sets ValidationError component and passes error info to it.
       let validation;
       if (this.state.validationError) {
         validation = <ValidationError error={this.state.error}/>

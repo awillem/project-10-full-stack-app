@@ -12,7 +12,8 @@ class CourseDetail extends Component {
         };
     }
 
-
+// loads in the correct course information based on the id.  
+// if course is not found, routes to /notfound.  Other errors to /error
     componentDidMount() {
         axios.get(`http://localhost:5000/api/courses/${this.props.id}`)
           .then(response => {
@@ -39,6 +40,7 @@ class CourseDetail extends Component {
     
 
     render() {
+        // if the authenticated user is the course owner, show the update and delete buttons component
         let links;
         let update = `/courses/${this.props.id}/update`;
         if (this.props.user._id === this.state.userId) {

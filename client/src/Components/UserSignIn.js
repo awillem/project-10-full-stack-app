@@ -15,6 +15,7 @@ class UserSignin extends Component {
         };
       }
 
+      //adds functionality to input fields
     onUserChange = e => {
         this.setState({ user: e.target.value});
     }
@@ -23,20 +24,18 @@ class UserSignin extends Component {
         this.setState({ password: e.target.value});
     }
 
+    // prevents default, calls signIn
     handleSubmit = e => {
         e.preventDefault();
-        let emailInput = document.getElementById('emailAddress');
-      let passwordInput = document.getElementById('password');
-        this.props.signIn(this.user.value,this.password.value, emailInput, passwordInput);
-        // this.props.history.goBack();
-        // this.props.history.push('/');
+        this.props.signIn(this.user.value,this.password.value);
     }
 
     render() {      
         return (
             <Consumer >
                 {context => {
-                    // function validation(context) {
+                        //if activeUser, go back to previous page
+                        //if not activeUser, adds error indicator for user and then for password.
                         let userInput = document.getElementById('emailAddress');
                         let passwordInput = document.getElementById('password');
                         if (context.activeUser) {
@@ -48,9 +47,7 @@ class UserSignin extends Component {
                             userInput.style.border = '#ccc4d8 1px solid';
                             passwordInput.style.border = 'red 1px solid';
                         }
-                    // }
-                    // validation(context);
-                    // userInput.style.border = '1px solid #ccc4d8';
+                    
                     
 
                     return(

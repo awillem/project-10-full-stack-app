@@ -37,7 +37,14 @@ class App extends Component {
     };        
   }
 
-signIn = (email,pass, emailInput=0, passwordInput=0) => {
+/*Global SignIn function
+  Axios request to verify email and password.  If verified, setState with user data and changes activeUser indicator to true
+  Stores user data in local storage
+  If 401 error, user not valid.  Checks first for email address, then password. userInvalid and passwordInvalid indicators used on SignUp page
+  if other error, directed to error page.
+*/
+
+signIn = (email,pass) => {
   let user = email;
   let password = pass;
   this.setState({
@@ -75,14 +82,15 @@ signIn = (email,pass, emailInput=0, passwordInput=0) => {
           });
         }
       } else {
-        return window.location.href = "/error";
+        this.props.history.push('/error');
+        // return window.location.href = "/error";
       }
     });
     
 }  
 
 
-
+// Global signOut - changes state for user and activeUser.  Also removes user info from localStorage
 signOut = () => {
   this.setState({
     user: "",
@@ -93,7 +101,7 @@ signOut = () => {
 
 
 
-
+//Once component mounted, checks to see if user is stored in localStorage.  If so, calls signIn
   componentDidMount() {
     if (localStorage.user) {
       let localUser = JSON.parse(window.localStorage.getItem('user'));
@@ -121,14 +129,15 @@ signOut = () => {
         <BrowserRouter>
           <div>
             <Header user={this.state.user} />
+            {/* if this.state.loading is true, shows 'loading' else, Switch sets up all the routes. */}
             { 
               (this.state.loading)
               ? <p>Loading...</p>
               :<Switch>
                 <Route exact path="/" render={() => <Courses  />} />
                 <Route exact path="/courses" render={() => <Courses  />} />
-                <PrivateRoute path="/courses/create" component={CreateCourse} user={this.state.user}  /*render={() => <CreateCourse   />}*/ />
-                <PrivateRoute path="/courses/:id/update" update={this.updateCourse}  user={this.state.user} component={UpdateCourse}   /*render={({match}) => <UpdateCourse id={match.params.id} UpdateCourse={this.updateCourse}*/ />} />
+                <PrivateRoute path="/courses/create" component={CreateCourse} user={this.state.user}   />
+                <PrivateRoute path="/courses/:id/update" update={this.updateCourse}  user={this.state.user} component={UpdateCourse}    />} />
                 <Route path="/courses/:id" render={({match}) => <CourseDetail id={match.params.id} user={this.state.user} activeUser={this.state.activeUser}  />} />
                 <Route path="/signin" render={() => <UserSignIn signIn={this.signIn} error={this.state.error} activeUser={this.activeUser} userInvalid={this.state.userInvalid} passwordInvalid={this.passwordInvalid} />} />
                 <Route path="/signup" render={() => <UserSignUp signIn={this.signIn} error={this.state.signUpError} validationError={this.state.validationError}/>} />

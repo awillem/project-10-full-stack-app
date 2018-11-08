@@ -8,6 +8,7 @@ const Header = () => {
       
       <Consumer>
         {context => {
+          //if there is an active user, display the HeaderUser, else display the SignIn/SignUp options
           let userDisplay;
           if(context.activeUser) {
             userDisplay = <HeaderUser />

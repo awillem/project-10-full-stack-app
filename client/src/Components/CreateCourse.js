@@ -20,6 +20,8 @@ class CreateCourse extends Component {
     };
 }
 
+
+// adds functionality for typing in input/text fields
 onTitleChange = e => {
   this.setState({ title: e.target.value});
 }
@@ -36,6 +38,10 @@ onMaterialsChange = e => {
   this.setState({ materials: e.target.value});
 }
 
+
+// Creates a course using currently authenticated user as the user
+// if 400 validation error, changes validationError to true, and sets error to the error inforamtion which gets passed to the Validation component
+// if other error, routes to /error
 createCourse = (cTitle, cDescription, cTime, cMaterials) => {
   let createTitle = cTitle;
   let createDescription = cDescription;
@@ -73,15 +79,14 @@ createCourse = (cTitle, cDescription, cTime, cMaterials) => {
 handleSubmit = e => {
   e.preventDefault();
   this.createCourse(this.state.title,this.state.description,this.state.time,this.state.materials);
-  // this.setState({
-  //   redirect: true
-  // });
-  // this.props.history.goBack();
-  // this.props.history.push('/');
+  
 }
 
 
     render() {
+
+      //if there is a validation error, sets variable to the ValidationError component which is passed the error information.  
+      // ValidationError componenet determines which messages to display
       let validation;
       if (this.state.validationError) {
         validation = <ValidationError error={this.state.error}/>
@@ -94,15 +99,7 @@ handleSubmit = e => {
           <h1>Create Course</h1>
           <div>
             {validation}
-            {/* <div>
-              <h2 className="validation--errors--label">Validation errors</h2>
-              <div className="validation-errors">
-                <ul>
-                  <li>Please provide a value for "Title"</li>
-                  <li>Please provide a value for "Description"</li>
-                </ul>
-              </div>
-            </div> */}
+           
             <form onSubmit={this.handleSubmit}>
               <div className="grid-66">
                 <div className="course--header">

@@ -16,6 +16,8 @@ class UpdateCourse extends Component {
         };
     }
 
+    //loads course information.  If the returned course user doesn't match authenticated user, routes to /forbidden
+    //if course is not found, routes to /not found, otherwise to /error
     componentDidMount() {
         axios.get(`http://localhost:5000/api/courses/${this.props.match.params.id}`)
           .then(response => {
@@ -32,10 +34,16 @@ class UpdateCourse extends Component {
             }
         })
         .catch(error => {
-            this.props.history.push('/notfound');
+            if(error.response.status === 404) {
+                this.props.history.push('/notfound');
+            } else {
+                this.props.history.push('/error');
+            }
         });
     }
 
+
+    //Adds functionality to use input/text fields
     onTitleChange = e => {
         this.setState({ title: e.target.value});
     }
@@ -52,6 +60,9 @@ class UpdateCourse extends Component {
         this.setState({ materials: e.target.value});
     }
 
+    // put request to update course based on input/text fields.  Only allowed if auth user is course owner
+    // Validation errors set validationError to true and error to the error response, which is passed to ValidationError component
+    //other errors route to /error
     updateCourse = (uTitle, uDescription, uTime, uMaterials, id) => {
         let updateTitle = uTitle;
         let updateDescription = uDescription;
@@ -90,7 +101,7 @@ class UpdateCourse extends Component {
       }
 
     
-
+      // prevents default on submit and calls updateCourse
     handleSubmit = e => {
         e.preventDefault();
         this.updateCourse(this.state.title,this.state.description,this.state.time,this.state.materials, this.state.id);
@@ -99,7 +110,7 @@ class UpdateCourse extends Component {
 
     render() {
        
-
+        //if validationError, sets ValidationError and passes error information
         let validation;
         if (this.state.validationError) {
           validation = <ValidationError error={this.state.error}/>

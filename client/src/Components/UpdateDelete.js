@@ -4,6 +4,7 @@ import axios from 'axios';
 
 class UpdateDelete extends Component {
 
+        //deletes current course if auth user is course owner, returns to home page
     deleteCourse = (deleteId) => {
         let url = `http://localhost:5000/api/courses/${deleteId}`;
         axios.delete(url, {
@@ -17,10 +18,11 @@ class UpdateDelete extends Component {
         this.props.history.push('/');
         })
         .catch(error => {
-            this.props.history.push('/');
+            this.props.history.push('/error');
         });
       }
 
+      //calls deleteCourse when Delete Course is clicked
     handleSubmit = e => {
         e.preventDefault();
         
