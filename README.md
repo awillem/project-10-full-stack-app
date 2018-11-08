@@ -3,9 +3,9 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 To Start: 
 Start up MongoDB
-In the terminal, naviagate to the api directory and type 'npm start' 
+In the terminal, naviagate to the api directory.  Type 'npm install'.  When that is finished, type 'npm start' (This api uses bcrypt which can have npm install issues for some users.  I use yarn to install bcrypt )
 
-In another terminal, navigate to the client directory and type 'npm start'
+In another terminal, navigate to the client directory. Type 'npm install'.  When that is finished, type 'npm start'
 This should open  a tab in your browser, viewing localhost:3000. 
 
 
